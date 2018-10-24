@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Customer } from '../customer';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-customer',
@@ -9,7 +10,7 @@ import { Customer } from '../customer';
 })
 export class CustomerComponent implements OnInit {
 
-  nationalities=['', 'US', 'UK', 'Iceland', 'South Korea'];
+  nationalities=[''];
   customer = new Customer(1, '', '', 23);
 
   submitted = false;
@@ -17,9 +18,16 @@ export class CustomerComponent implements OnInit {
   onSubmit(){
     this.submitted = true;
   }
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.http.get('https://restcountries.eu/rest/v2/all').subscribe(data => {
+      for (var key in data) {
+        if (data.hasOwnProperty(key)) {
+            this.nationalities.push(data[key].name);
+        }
+    }
+   });
   }
 
 }
